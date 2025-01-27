@@ -1,13 +1,33 @@
 // Импортируем
-import { useState, useMemo, useEffect } from "react";
-import { slowFunction } from "./utils";
-import "../styles.css";
+import { useState, useMemo, useEffect } from 'react';
+import { slowFunction } from './utils';
+import '../styles.css';
+
+const cache = new Map();
+
+const calculate = (count) => {
+  const key = JSON.stringify(count);
+
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+
+  const result = slowFunction(count);
+  cache.set(key, result);
+
+  console.log(cache);
+  return result;
+};
 
 /** Пример тяжелых вычислений */
 const ComponentB = ({ count, count2 }) => {
   const startTime = performance.now();
+
   /* Наша тяжелая ф-я подсчетов */
-  const value = slowFunction();
+  // const value = slowFunction();
+  // const value = useMemo(() => slowFunction(count), [count]);
+  const value = calculate(count);
+
   const finishTime = performance.now();
 
   return (
@@ -33,7 +53,7 @@ const ComponentA = () => {
   /* Ф-я инкрементирует count */
   const onClick = () => setCount((currentCount) => currentCount + 1);
   /* Ф-я инкрементирует count */
-  const onClick2 = () => setCount2((currentCount) => currentCount + 1);
+  const onClick2 = () => setCount((currentCount) => currentCount - 1);
 
   return (
     <div className="component">
