@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo, useMemo } from 'react';
 import { list } from './stubs';
 import { slowFunction } from './utils';
 import '../styles.css';
@@ -9,46 +9,62 @@ const ComponentA = () => {
   // console.log(Object.is(NaN, NaN));
   // console.log(Object.is(-0, 0));
   // console.log(Object.is(obj, {}));
-  return <Wrapper children={<ComponentB />} />;
-};
 
-const Wrapper = ({ children }) => {
+  // return <Wrapper children={<ComponentB />} />;
+
   const [count, setCount] = useState(0);
   const onClick = () => setCount((current) => ++current);
 
+  const testProp = useMemo(() => () => 10, []);
+
   return (
-    <div
-      className="component"
-      style={{ backgroundColor: count % 2 === 0 ? '#000' : 'initial' }}
-    >
+    <div className="component">
       <h3>Component A</h3>
       <p>{`Show result value: ${count}`}</p>
       <button className="button" onClick={onClick}>
         Update count
       </button>
 
-      {children}
+      <MemoComponentB testProp={testProp} />
+      <ComponentCList />
     </div>
   );
 };
 
+// const Wrapper = ({ children }) => {
+//   const [count, setCount] = useState(0);
+//   const onClick = () => setCount((current) => ++current);
+
+//   return (
+//     <div
+//       className="component"
+//       style={{ backgroundColor: count % 2 === 0 ? '#000' : 'initial' }}
+//     >
+//       <h3>Component A</h3>
+//       <p>{`Show result value: ${count}`}</p>
+//       <button className="button" onClick={onClick}>
+//         Update count
+//       </button>
+
+//       {children}
+//     </div>
+//   );
+// };
+
 /** Пример тяжелых вычислений */
-const ComponentB = () => {
+const ComponentB = (testProp) => {
   /* Ф-я, выполняющая достаточно трудоемкий код */
   const result = slowFunction();
 
   return (
     <div className="component">
       <h3>Component B</h3>
-      <p>{`Show result value: ${result}`}</p>
+      <p>{`Show result value: ${testProp.testCount}`}</p>
     </div>
   );
 };
 
-const MemoComponentB = memo(ComponentB, (prev, next) => {
-  if (prev.testProp.testCount === next.testProp.testCount) return true;
-  return false;
-});
+const MemoComponentB = memo(ComponentB);
 
 /** Пример тяжелого рендеринга */
 const ComponentCList = () => {
@@ -68,7 +84,7 @@ const ComponentC = ({ id }) => {
   return (
     <div className="component">
       <h3>Component C</h3>
-      <ComponentD />
+      {/* <ComponentD /> */}
     </div>
   );
 };

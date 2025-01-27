@@ -1,4 +1,4 @@
-import { ComponentA } from './components/lesson3/Components';
+import { ComponentA } from './components/lesson1/Components';
 import './App.css';
 
 /** Для работы с уроком useMemo и далее импортируйте компонент А
