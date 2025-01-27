@@ -2,7 +2,7 @@
 const createArray = (count) => new Array(count).fill().map((_, i) => i + 1);
 
 /* Для ComponentCList */
-export const list = createArray(50000);
+export const list = createArray(3000);
 
 /* Для slowFunction урок из первых уроков */
 export const arr1 = createArray(1000);
