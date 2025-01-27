@@ -1,47 +1,54 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { list } from './stubs';
 import { slowFunction } from './utils';
 import '../styles.css';
 
 const ComponentA = () => {
-  /* Устанавливаем стейт счетчика */
-  const [count, setCount] = useState(1);
+  // const obj = {};
+  // console.log(Object.is('1', 1));
+  // console.log(Object.is(NaN, NaN));
+  // console.log(Object.is(-0, 0));
+  // console.log(Object.is(obj, {}));
+  return <Wrapper children={<ComponentB />} />;
+};
 
-  /* Ф-я инкрементирует count */
-  const onClick = () => setCount((currentCount) => currentCount + 1);
+const Wrapper = ({ children }) => {
+  const [count, setCount] = useState(0);
+  const onClick = () => setCount((current) => ++current);
 
   return (
-    <div className="component">
+    <div
+      className="component"
+      style={{ backgroundColor: count % 2 === 0 ? '#000' : 'initial' }}
+    >
       <h3>Component A</h3>
-      <p>{`State Count: ${count}`}</p>
+      <p>{`Show result value: ${count}`}</p>
       <button className="button" onClick={onClick}>
         Update count
       </button>
-      <ComponentB />
-      <ComponentCList />
+
+      {children}
     </div>
   );
 };
 
 /** Пример тяжелых вычислений */
-const ComponentB = ({ count }) => {
+const ComponentB = () => {
   /* Ф-я, выполняющая достаточно трудоемкий код */
-  const startTime = performance.now();
   const result = slowFunction();
-  const endTime = performance.now();
-
-  useEffect(() => {
-    console.count('Render');
-  });
 
   return (
     <div className="component">
       <h3>Component B</h3>
       <p>{`Show result value: ${result}`}</p>
-      <p>{`Врем выполнения операции: ${Math.round(endTime - startTime)}`}</p>
     </div>
   );
 };
+
+const MemoComponentB = memo(ComponentB, (prev, next) => {
+  if (prev.testProp.testCount === next.testProp.testCount) return true;
+  return false;
+});
 
 /** Пример тяжелого рендеринга */
 const ComponentCList = () => {
@@ -54,13 +61,27 @@ const ComponentCList = () => {
   );
 };
 
+const MemoComponentCList = memo(ComponentCList);
+
 const ComponentC = ({ id }) => {
   const title = `Component C ${id}`;
   return (
     <div className="component">
-      <h3>{title}</h3>
+      <h3>Component C</h3>
+      <ComponentD />
     </div>
   );
 };
+
+const content = <div>content</div>;
+
+const ComponentD = memo(() => {
+  return (
+    <div className="component">
+      <h3>Component D</h3>
+      {content}
+    </div>
+  );
+});
 
 export { ComponentA };
