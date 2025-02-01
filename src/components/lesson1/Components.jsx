@@ -1,4 +1,4 @@
-import { useEffect, useState, memo, useMemo } from 'react';
+import { useEffect, useState, memo, useMemo, useCallback } from 'react';
 import { list } from './stubs';
 import { slowFunction } from './utils';
 import '../styles.css';
@@ -15,7 +15,11 @@ const ComponentA = () => {
   const [count, setCount] = useState(0);
   const onClick = () => setCount((current) => ++current);
 
-  const testProp = useMemo(() => () => 10, []);
+  // const testProp = useMemo(() => () => 10, []);
+
+  // const testFunc = useCallback(() => count * count, [count]);
+
+  const getApiUrl = useCallback(() => `url/${count}`, [count]);
 
   return (
     <div className="component">
@@ -25,8 +29,7 @@ const ComponentA = () => {
         Update count
       </button>
 
-      <MemoComponentB testProp={testProp} />
-      <ComponentCList />
+      <MemoComponentB getApiUrl={getApiUrl} />
     </div>
   );
 };
@@ -52,14 +55,19 @@ const ComponentA = () => {
 // };
 
 /** Пример тяжелых вычислений */
-const ComponentB = (testProp) => {
+const ComponentB = ({ getApiUrl }) => {
   /* Ф-я, выполняющая достаточно трудоемкий код */
-  const result = slowFunction();
+  // const result = testFunc();
+
+  useEffect(() => {
+    console.log(getApiUrl());
+  }, [getApiUrl]);
 
   return (
     <div className="component">
       <h3>Component B</h3>
-      <p>{`Show result value: ${testProp.testCount}`}</p>
+      <p>{`Show result value:`}</p>
+      <ComponentC />
     </div>
   );
 };
